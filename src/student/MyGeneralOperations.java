@@ -15,7 +15,7 @@ public class MyGeneralOperations implements GeneralOperations {
 		
 		try (Statement stmt = conn.createStatement()) {
 			stmt.executeUpdate("DELETE FROM [Transaction]");
-			stmt.executeUpdate("DELETE FROM [Selected]");
+			stmt.executeUpdate("DELETE FROM [Item]");
 			stmt.executeUpdate("DELETE FROM [Article]");
 			stmt.executeUpdate("DELETE FROM [Store]");
 			stmt.executeUpdate("DELETE FROM [Order]");

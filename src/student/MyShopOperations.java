@@ -116,7 +116,7 @@ public class MyShopOperations implements ShopOperations {
         	ResultSet set = pstmt.executeQuery();
 
             if (set.next()) {
-                return set.getInt("IdS");
+                return set.getInt("IdT");
             } else
             	return -1;
             
