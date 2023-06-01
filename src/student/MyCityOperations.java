@@ -27,6 +27,7 @@ public class MyCityOperations implements CityOperations {
         	int ret = stmt.executeUpdate();
             return ret;
         } catch (SQLException e) {
+        	e.printStackTrace();
         }
         
         return -1;
@@ -50,6 +51,7 @@ public class MyCityOperations implements CityOperations {
             }
         
         } catch (SQLException e) {
+        	e.printStackTrace();
         }
 		return -1;
 	}
@@ -68,6 +70,7 @@ public class MyCityOperations implements CityOperations {
             }
             return ids;
         } catch (SQLException e) {
+        	e.printStackTrace();
         }
 
         return null;
@@ -92,6 +95,7 @@ public class MyCityOperations implements CityOperations {
             return ids;
             
         } catch (SQLException e) {
+        	e.printStackTrace();
         }
 
         return null;
@@ -115,6 +119,7 @@ Connection conn = DB.getInstance().getConnection();
             return ids;
             
         } catch (SQLException e) {
+        	e.printStackTrace();
         }
 
         return null;

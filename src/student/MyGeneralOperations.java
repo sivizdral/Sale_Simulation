@@ -20,7 +20,6 @@ public class MyGeneralOperations implements GeneralOperations {
 			stmt.executeUpdate("DELETE FROM [Store]");
 			stmt.executeUpdate("DELETE FROM [Order]");
 			stmt.executeUpdate("DELETE FROM [Buyer]");
-			stmt.executeUpdate("DELETE FROM [Sale]");
 			stmt.executeUpdate("DELETE FROM [Path]");
 			stmt.executeUpdate("DELETE FROM [Town]");
         } catch (SQLException e) {
