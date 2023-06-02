@@ -1,6 +1,7 @@
 package student;
 
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,15 +36,15 @@ public class MyOrderOperations implements OrderOperations {
                 	String sql2 = "SELECT IdI FROM Item WHERE IdA = ? AND IdO = ?";
                     try (PreparedStatement pstmt2 = conn.prepareStatement(sql2)) {
                         pstmt2.setInt(1, arg1);
-                        pstmt2.setInt(2, arg0);
-                        
-
+                        pstmt2.setInt(2, arg0);                       
 
                         ResultSet rs2 = pstmt2.executeQuery();
                         if (rs2.next()) {
+                        	System.out.println("HERE_HERE");
                         	id = rs2.getInt("IdI");
                         }
                         else {
+                        	System.out.println("HERE");
                         	String sql3 = "INSERT INTO Item (IdA, IdO, Quantity) VALUES (?, ?, 0)";
                             try (PreparedStatement pstmt3 = conn.prepareStatement(sql3, Statement.RETURN_GENERATED_KEYS)) {
                                 pstmt3.setInt(1, arg1);
@@ -56,11 +57,16 @@ public class MyOrderOperations implements OrderOperations {
                                 }
                                 else {
                                 	ResultSet set3 = pstmt3.getGeneratedKeys();
-                                	id = set3.getInt(1);
+                                	
+                                	if (set3.next()) {
+                                		id = set3.getInt(1);
+                                    }
+                                	
                                 }
                                 
                                 
                             } catch (SQLException e) {
+                            	e.printStackTrace();
                             }
                         	
                         }
@@ -73,15 +79,31 @@ public class MyOrderOperations implements OrderOperations {
                             pstmt4.executeUpdate();
                             
                         } catch (SQLException e) {
-                        } 
+                        	e.printStackTrace();
+                        }
+                        
+                        String sql5 = "UPDATE Article SET QuantityOnStock = QuantityOnStock - ? WHERE IdA = ?";
+                        try (PreparedStatement pstmt5 = conn.prepareStatement(sql5)) {
+                            pstmt5.setInt(1, arg2);
+                            pstmt5.setInt(2, arg1);
+
+                            pstmt5.executeUpdate();
+                            
+                            return 1;
+                            
+                        } catch (SQLException e) {
+                        	e.printStackTrace();
+                        }
                         
                     } catch (SQLException e) {
+                    	e.printStackTrace();
                     }
                 	
                 }
             }           
             
         } catch (SQLException e) {
+        	e.printStackTrace();
         }
         
         return -1;
@@ -89,8 +111,37 @@ public class MyOrderOperations implements OrderOperations {
 
 	@Override
 	public int completeOrder(int arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection conn = DB.getInstance().getConnection();
+		
+		String sql = "UPDATE [Order] SET State = 'sent', SentTime = GETDATE() WHERE IdO = ?";
+		
+		try (PreparedStatement pstmt = conn.prepareStatement(sql);)
+		{
+        	pstmt.setInt(1, arg0);
+			
+        	int rows = pstmt.executeUpdate();
+
+            if (rows < 1) {
+                return -1;
+            }
+            
+            String sql2 = "{ call SP_FINAL_PRICE(?) }";
+            
+            try (CallableStatement stmt2 = conn.prepareCall(sql2)) {
+                stmt2.setInt(1, arg0);
+                stmt2.execute();
+                
+                
+                
+            } catch (SQLException e) {
+            	e.printStackTrace();
+            }
+            
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return -1;
 	}
 
 	@Override
@@ -121,7 +172,7 @@ public class MyOrderOperations implements OrderOperations {
 	public BigDecimal getDiscountSum(int arg0) {
 		Connection conn = DB.getInstance().getConnection();
 		
-		String sql = "SELECT Discount FROM Order WHERE IdO = ?";
+		String sql = "SELECT Discount FROM [Order] WHERE IdO = ?";
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql);)
 		{
@@ -144,7 +195,7 @@ public class MyOrderOperations implements OrderOperations {
 	public BigDecimal getFinalPrice(int arg0) {
 		Connection conn = DB.getInstance().getConnection();
 		
-		String sql = "SELECT FinalPrice FROM Order WHERE IdO = ?";
+		String sql = "SELECT FinalPrice FROM [Order] WHERE IdO = ?";
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql);)
 		{
@@ -291,8 +342,64 @@ public class MyOrderOperations implements OrderOperations {
 
 	@Override
 	public int removeArticle(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection conn = DB.getInstance().getConnection();
+		
+		String sql = "SELECT Quantity FROM Item WHERE IdO = ? AND IdA = ?";
+		int quantity = 0;
+		
+		try (PreparedStatement pstmt = conn.prepareStatement(sql);)
+		{
+        	pstmt.setInt(1, arg0);
+        	pstmt.setInt(2, arg1);
+			
+        	ResultSet set = pstmt.executeQuery();
+
+            if (set.next()) {
+                quantity = set.getInt("Quantity");
+            } else
+            	return -1;
+            
+            String sql2 = "DELETE FROM Item WHERE IdO = ? AND IdA = ?";
+    		
+    		try (PreparedStatement pstmt2 = conn.prepareStatement(sql2);)
+    		{
+            	pstmt2.setInt(1, arg0);
+            	pstmt2.setInt(2, arg1);
+    			
+            	int rows = pstmt.executeUpdate();
+
+                if (rows < 1) {
+                    return -1;
+                }
+                
+                String sql3 = "UPDATE Article SET QuantityOnStock = QuantityOnStock + ? WHERE IdA = ?";
+        		
+        		try (PreparedStatement pstmt3 = conn.prepareStatement(sql3);)
+        		{
+                	pstmt3.setInt(1, quantity);
+                	pstmt3.setInt(2, arg1);
+        			
+                	rows = pstmt.executeUpdate();
+
+                    if (rows < 1) {
+                        return -1;
+                    }  
+                    return 1;                                             
+                    
+        		} catch (SQLException e) {
+        			e.printStackTrace();
+        		}
+
+                
+    		} catch (SQLException e) {
+    			e.printStackTrace();
+    		}
+            
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return -1;
 	}
 
 }

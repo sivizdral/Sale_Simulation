@@ -40,7 +40,7 @@ public class MyBuyerOperations implements BuyerOperations {
 	public int createOrder(int arg0) {
 		Connection conn = DB.getInstance().getConnection();
 		
-		String sql = "INSERT INTO [Order] (IdB) VALUES (?)";
+		String sql = "INSERT INTO [Order] (IdB, State) VALUES (?, 'created')";
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);)
 		{

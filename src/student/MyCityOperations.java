@@ -103,7 +103,7 @@ public class MyCityOperations implements CityOperations {
 
 	@Override
 	public List<Integer> getShops(int arg0) {
-Connection conn = DB.getInstance().getConnection();
+		Connection conn = DB.getInstance().getConnection();
 		
         String sql = "SELECT IdS from Store WHERE IdT = ?";
         List<Integer> ids = new ArrayList<>();
