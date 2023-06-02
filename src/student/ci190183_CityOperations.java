@@ -11,18 +11,21 @@ import java.util.List;
 import rs.etf.sab.operations.CityOperations;
 
 
-public class MyCityOperations implements CityOperations {
+public class ci190183_CityOperations implements CityOperations {
 
 	@Override
 	public int connectCities(int arg0, int arg1, int arg2) {
 		Connection conn = DB.getInstance().getConnection();
 		
-        String sql = "INSERT INTO Path(IdT1, IdT2, Distance) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Path(IdT1, IdT2, Distance) VALUES (?, ?, ?), (?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         	stmt.setInt(1, arg0);
         	stmt.setInt(2, arg1);
         	stmt.setInt(3, arg2);
+        	stmt.setInt(4, arg1);
+        	stmt.setInt(5, arg0);
+        	stmt.setInt(6, arg2);
         	
         	int ret = stmt.executeUpdate();
             return ret;

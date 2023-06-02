@@ -7,7 +7,7 @@ import java.util.Calendar;
 
 import rs.etf.sab.operations.GeneralOperations;
 
-public class MyGeneralOperations implements GeneralOperations {
+public class ci190183_GeneralOperations implements GeneralOperations {
 
 	@Override
 	public void eraseAll() {
@@ -36,12 +36,16 @@ public class MyGeneralOperations implements GeneralOperations {
 
 	@Override
 	public void setInitialTime(Calendar arg0) {
-		myTime = arg0;
+		myTime = Calendar.getInstance();
+        myTime.setTimeInMillis(arg0.getTimeInMillis());
 	}
 
 	@Override
 	public Calendar time(int arg0) {
 		myTime.add(Calendar.DAY_OF_MONTH, arg0);
+		
+		ShortestPath.getInstance().passedDays(arg0);	
+		
 		return myTime;
 	}
 

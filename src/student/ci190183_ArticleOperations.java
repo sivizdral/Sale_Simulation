@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import rs.etf.sab.operations.ArticleOperations;
 
-public class MyArticleOperations implements ArticleOperations {
+public class ci190183_ArticleOperations implements ArticleOperations {
 
 	@Override
 	public int createArticle(int arg0, String arg1, int arg2) {

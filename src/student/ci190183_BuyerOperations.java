@@ -10,7 +10,7 @@ import java.util.List;
 
 import rs.etf.sab.operations.BuyerOperations;
 
-public class MyBuyerOperations implements BuyerOperations {
+public class ci190183_BuyerOperations implements BuyerOperations {
 
 	@Override
 	public int createBuyer(String arg0, int arg1) {

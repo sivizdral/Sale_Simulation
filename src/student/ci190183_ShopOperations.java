@@ -9,7 +9,7 @@ import java.util.List;
 
 import rs.etf.sab.operations.ShopOperations;
 
-public class MyShopOperations implements ShopOperations {
+public class ci190183_ShopOperations implements ShopOperations {
 
 	@Override
 	public int createShop(String arg0, String arg1) {
